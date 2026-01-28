@@ -43,4 +43,4 @@ jobs:
         uses: gradle/actions/setup-gradle@v3
 
       - name: Build iOS Framework
-        run: ./gradlew linkPodDebugFrameworkIosArm64
+        run: ./gradlew ./gradlew linkDebugFrameworkIosArm64
