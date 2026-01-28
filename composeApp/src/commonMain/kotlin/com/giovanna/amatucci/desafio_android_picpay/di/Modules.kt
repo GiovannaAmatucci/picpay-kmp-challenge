@@ -9,13 +9,19 @@ import com.giovanna.amatucci.desafio_android_picpay.domain.repository.ContactsRe
 import com.giovanna.amatucci.desafio_android_picpay.domain.usecase.FetchContactsUseCase
 import com.giovanna.amatucci.desafio_android_picpay.domain.usecase.FetchContactsUseCaseImpl
 import com.giovanna.amatucci.desafio_android_picpay.presentation.feature.ContactsViewModel
+import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val networkModule = module {
-    single { PicPayHttpClient(get(), get()) }
+    single<HttpClient> {
+        PicPayHttpClient(
+            config = get(), logWriter = get()
+        ).invoke()
+    }
+
     single<PicPayApi> { PicPayApiImpl(get(), get()) }
 }
 val domainModule = module {

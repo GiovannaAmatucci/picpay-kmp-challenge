@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.flowOf
 import org.koin.dsl.module
 
 val iosModule = module {
-    single {
-        HttpClientConfig(
+    single { HttpClientConfig(
             baseUrl = "https://609a908e0f5a13001721b74e.mockapi.io/picpay/api/",
             debug = true,
             requestTimeout = 20_000L,
