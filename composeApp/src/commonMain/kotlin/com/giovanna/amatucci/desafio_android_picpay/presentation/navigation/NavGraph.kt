@@ -1,0 +1,6 @@
+package com.giovanna.amatucci.desafio_android_picpay.presentation.navigation
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+object ContactsListScreen

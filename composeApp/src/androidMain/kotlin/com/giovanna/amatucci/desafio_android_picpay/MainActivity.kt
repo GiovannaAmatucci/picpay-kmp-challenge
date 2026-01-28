@@ -6,6 +6,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.giovanna.amatucci.desafio_android_picpay.presentation.navigation.AppNavHost
+import com.giovanna.amatucci.desafio_android_picpay.ui.theme.PicpayTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -13,7 +16,10 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            App()
+            PicpayTheme {
+                val navController = rememberNavController()
+                AppNavHost(navController)
+            }
         }
     }
 }

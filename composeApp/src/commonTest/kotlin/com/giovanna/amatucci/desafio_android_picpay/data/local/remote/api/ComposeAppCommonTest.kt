@@ -1,4 +1,4 @@
-package com.giovanna.amatucci.desafio_android_picpay
+package com.giovanna.amatucci.desafio_android_picpay.data.local.remote.api
 
 import kotlin.test.Test
 import kotlin.test.assertEquals

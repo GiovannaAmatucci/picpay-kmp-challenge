@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">picpay-kmp-challenge</string>
+    <string name="title">Contatos</string>
+    <string name="contact_avatar_description">Foto de %s</string>
+    <string name="contact_username_format">%s</string>
+    <string name="empty_state_message">Nenhum contato encontrado.</string>
+    <string name="error_title">Ocorreu um erro</string>
+    <string name="error_default_message">Não foi possível carregar os dados.</string>
+    <string name="error_network_message">Falha na conexão. Verifique sua internet.</string>
+    <string name="data_updated_message">Dados atualizados.</string>
+    <string name="retry_button">Tentar novamente</string>
+</resources>
