@@ -28,7 +28,6 @@ jobs:
   # 🍎  IOS
   ios-check:
     runs-on: macos-latest
-    needs: android-check
     steps:
       - name: Checkout
         uses: actions/checkout@v4
