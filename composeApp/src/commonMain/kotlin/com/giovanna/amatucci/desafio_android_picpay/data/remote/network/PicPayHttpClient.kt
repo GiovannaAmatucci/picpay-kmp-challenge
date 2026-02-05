@@ -38,7 +38,8 @@ class PicPayHttpClient(
 
             defaultRequest {
                 contentType(ContentType.Application.Json)
-                url(config.baseUrl)
+                val safeUrl = config.baseUrl.trim().replace("\"", "")
+                url(safeUrl)
             }
 
             install(Logging) {
@@ -51,6 +52,5 @@ class PicPayHttpClient(
             }
         }
     }
-
     operator fun invoke(): HttpClient = client
 }

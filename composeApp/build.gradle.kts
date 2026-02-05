@@ -1,3 +1,4 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -9,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlinSerialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.room)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -96,6 +98,28 @@ kotlin {
     }
 }
 
+buildkonfig {
+    packageName = "com.giovanna.amatucci.desafio_android_picpay"
+    objectName = "AppConfig"
+    exposeObjectWithName = "AppConfig"
+
+    defaultConfigs {
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "BASE_URL",
+            "\"https://609a908e0f5a13001721b74e.mockapi.io/picpay/api/\""
+        )
+        buildConfigField(
+            FieldSpec.Type.STRING,
+            "DATABASE_NAME",
+            "\"picpay-db\""
+        )
+        buildConfigField(FieldSpec.Type.BOOLEAN, "DEBUG_MODE", "true")
+        buildConfigField(FieldSpec.Type.LONG, "REQUEST_TIMEOUT", "20_000L")
+        buildConfigField(FieldSpec.Type.LONG, "CONNECT_TIMEOUT", "15_000L")
+    }
+}
+
 android {
     namespace = "com.giovanna.amatucci.desafio_android_picpay"
     compileSdk = 36
@@ -106,21 +130,13 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-        buildConfigField(
-            "String", "BASE_URL", "\"https://609a908e0f5a13001721b74e.mockapi.io/picpay/api/\""
-        )
-        buildConfigField("String", "DATABASE_NAME", "\"picpay-db\"")
     }
 
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
-            buildConfigField("Boolean", "DEBUG_MODE", "false")
-            buildConfigField("Long", "REQUEST_TIMEOUT", "20_000L")
         }
         getByName("debug") {
-            buildConfigField("Boolean", "DEBUG_MODE", "true")
-            buildConfigField("Long", "REQUEST_TIMEOUT", "30_000L")
         }
     }
 
@@ -131,7 +147,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 }
 

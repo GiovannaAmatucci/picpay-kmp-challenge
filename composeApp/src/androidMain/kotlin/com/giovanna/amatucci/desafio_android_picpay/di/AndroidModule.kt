@@ -1,7 +1,7 @@
 package com.giovanna.amatucci.desafio_android_picpay.di
 
 import androidx.room.Room
-import com.giovanna.amatucci.desafio_android_picpay.BuildConfig
+import com.giovanna.amatucci.desafio_android_picpay.AppConfig
 import com.giovanna.amatucci.desafio_android_picpay.data.local.db.AppDatabase
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.network.HttpClientConfig
 import com.giovanna.amatucci.desafio_android_picpay.util.AndroidLogWriter
@@ -20,15 +20,14 @@ import java.security.SecureRandom
 val androidModule = module {
     single {
         HttpClientConfig(
-            baseUrl = BuildConfig.BASE_URL,
-            debug = BuildConfig.DEBUG_MODE,
-            requestTimeout = 20_000L,
-            connectTimeout = 15_000L
+            baseUrl = AppConfig.BASE_URL,
+            debug =  AppConfig.DEBUG_MODE,
+            requestTimeout = AppConfig.REQUEST_TIMEOUT,
+            connectTimeout = AppConfig.CONNECT_TIMEOUT
         )
     }
     single<LogWriter> { AndroidLogWriter() }
     single { CryptoManager() }
-
     single<AppDatabase> {
         val context = androidContext()
         val cryptoManager = get<CryptoManager>()
@@ -46,10 +45,9 @@ val androidModule = module {
         }
 
         val factory = SupportFactory(passphrase)
-
         Room.databaseBuilder<AppDatabase>(
             context = context,
-            name = BuildConfig.DATABASE_NAME
+            name = AppConfig.DATABASE_NAME
         )
             .openHelperFactory(factory)
             .fallbackToDestructiveMigration(false)
@@ -60,8 +58,6 @@ val androidModule = module {
         NetworkConnectivityObserver(androidContext())
     }
 }
-
-
 private fun generateAndSaveKey(cryptoManager: CryptoManager, file: File): ByteArray {
     val randomKey = ByteArray(32)
     SecureRandom().nextBytes(randomKey)
