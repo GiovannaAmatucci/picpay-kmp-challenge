@@ -21,7 +21,7 @@ sealed interface UiText {
     suspend fun asStringSuspend(): String {
         return when (this) {
             is DynamicString -> value
-            is StringResource -> getString(res, *args) // API do KMP que substitui o context.getString
+            is StringResource -> getString(res, *args)
         }
     }
 }
