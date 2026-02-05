@@ -1,0 +1,45 @@
+name: CI PicPay KMP
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  # 🤖  ANDROID
+  android-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run Tests & Build (Android)
+        run: ./gradlew assembleDebug testDebugUnitTest
+
+  # 🍎  IOS
+  ios-check:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run Tests (IOS)
+        run: ./gradlew iosSimulatorArm64Test
