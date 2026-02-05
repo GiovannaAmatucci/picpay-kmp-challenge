@@ -5,6 +5,5 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 class FakeConnectivityObserver : ConnectivityObserver {
     val status = MutableStateFlow(ConnectivityObserver.Status.Unavailable)
-
     override fun observe(): Flow<ConnectivityObserver.Status> = status
 }

@@ -34,7 +34,6 @@ import com.giovanna.amatucci.desafio_android_picpay.util.UiText
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
-
 @Composable
 fun ContactsListScreen(
     viewModel: ContactsViewModel = koinViewModel()
@@ -61,14 +60,12 @@ fun ContactsListScreen(
             }
         }
     }
-
     ContactsListContent(
         state = state,
         snackbarHostState = snackbarHostState,
         onEvent = { viewModel.onEvent(it) }
     )
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ContactsListContent(
@@ -122,14 +119,12 @@ internal fun ContactsListContent(
         }
     }
 }
-
 @Composable
 private fun LoadingState(modifier: Modifier = Modifier) {
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }
-
 @Composable
 private fun EmptyState(onRetry: () -> Unit, modifier: Modifier = Modifier) {
     Column(
@@ -146,7 +141,6 @@ private fun EmptyState(onRetry: () -> Unit, modifier: Modifier = Modifier) {
         )
     }
 }
-
 @Composable
 private fun ErrorState(message: UiText, onRetry: () -> Unit, modifier: Modifier = Modifier) {
     Column(
@@ -159,7 +153,6 @@ private fun ErrorState(message: UiText, onRetry: () -> Unit, modifier: Modifier 
         )
     }
 }
-
 object TestTags {
     const val LOADING = "LoadingState"
     const val ERROR_SCREEN = "ErrorScreen"

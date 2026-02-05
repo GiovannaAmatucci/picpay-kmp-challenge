@@ -11,27 +11,22 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class CryptoManager {
-
     private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply {
         load(null)
     }
-
     private val encryptCipher
         get() = Cipher.getInstance(TRANSFORMATION).apply {
             init(Cipher.ENCRYPT_MODE, getKey())
         }
-
     private fun getDecryptCipherForIv(iv: ByteArray): Cipher {
         return Cipher.getInstance(TRANSFORMATION).apply {
             init(Cipher.DECRYPT_MODE, getKey(), GCMParameterSpec(128, iv))
         }
     }
-
     private fun getKey(): SecretKey {
         val existingKey = keyStore.getEntry(KEY_ALIAS, null) as? KeyStore.SecretKeyEntry
         return existingKey?.secretKey ?: createKey()
     }
-
     private fun createKey(): SecretKey {
         return KeyGenerator.getInstance(ALGORITHM, "AndroidKeyStore").apply {
             init(
@@ -43,7 +38,6 @@ class CryptoManager {
             )
         }.generateKey()
     }
-
     fun encrypt(bytes: ByteArray, outputStream: OutputStream): ByteArray {
         val cipher = encryptCipher
         val encryptedBytes = cipher.doFinal(bytes)
@@ -55,7 +49,6 @@ class CryptoManager {
         }
         return encryptedBytes
     }
-
     fun decrypt(inputStream: InputStream): ByteArray {
         return inputStream.use {
             val ivSize = it.read()
@@ -69,7 +62,6 @@ class CryptoManager {
             cipher.doFinal(encryptedBytes)
         }
     }
-
     companion object {
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES
         private const val BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM

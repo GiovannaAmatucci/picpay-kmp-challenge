@@ -3,7 +3,6 @@ package com.giovanna.amatucci.desafio_android_picpay.util
 import androidx.compose.runtime.Composable
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
-
 sealed interface UiText {
     data class DynamicString(val value: String) : UiText
     class StringResource(

@@ -23,7 +23,6 @@ import com.giovanna.amatucci.desafio_android_picpay.ic_launcher_round
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-
 @Composable
 fun ContactItem(
     userInfo: UserInfo,

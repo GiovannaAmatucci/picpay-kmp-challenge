@@ -1,5 +1,6 @@
-package com.giovanna.amatucci.desafio_android_picpay.data.remote.api
+package com.giovanna.amatucci.desafio_android_picpay.data.local.remote.api
 
+import com.giovanna.amatucci.desafio_android_picpay.data.remote.api.PicPayApiImpl
 import com.giovanna.amatucci.desafio_android_picpay.util.FakeLogWriter
 import com.giovanna.amatucci.desafio_android_picpay.util.ResultWrapper
 import io.ktor.client.HttpClient

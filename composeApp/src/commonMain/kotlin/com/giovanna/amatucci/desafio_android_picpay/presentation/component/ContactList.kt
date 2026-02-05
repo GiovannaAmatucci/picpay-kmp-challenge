@@ -16,7 +16,6 @@ import com.giovanna.amatucci.desafio_android_picpay.domain.model.UserInfo
 import com.giovanna.amatucci.desafio_android_picpay.title
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import org.jetbrains.compose.resources.stringResource
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PullToRefreshContactList(
@@ -28,7 +27,6 @@ fun PullToRefreshContactList(
         ContactList(users = users)
     }
 }
-
 @Composable
 private fun ContactList(users: List<UserInfo>) {
     LazyColumn(modifier = Modifier.fillMaxSize()) {

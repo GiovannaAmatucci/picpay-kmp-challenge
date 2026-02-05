@@ -51,7 +51,6 @@ class ContactsViewModel(
         setupConnectivityObserver()
         triggerRefresh(force = false)
     }
-
     fun onEvent(event: ContactsUiEvent) {
         when (event) {
             ContactsUiEvent.OnRefresh -> triggerRefresh(force = true)
@@ -61,13 +60,11 @@ class ContactsViewModel(
             }
         }
     }
-
     private fun triggerRefresh(force: Boolean) {
         viewModelScope.launch {
             _refreshTrigger.emit(force)
         }
     }
-
     private fun setupDataPipeline() {
         viewModelScope.launch {
             _refreshTrigger.collectLatest { forceRefresh ->
@@ -75,7 +72,6 @@ class ContactsViewModel(
             }
         }
     }
-
     private suspend fun fetchContacts(forceRefresh: Boolean) {
         fetchContactsUseCase(forceRefresh).onStart {
             logWriter.d(tag, "${LogMessages.VM_PROCESS_START}: $forceRefresh")
@@ -97,7 +93,6 @@ class ContactsViewModel(
             handleResult(result)
         }
     }
-
     private fun handleResult(result: ResultWrapper<List<UserInfo>>) {
         _uiState.update { currentState ->
             when (result) {
@@ -120,7 +115,6 @@ class ContactsViewModel(
             }
         }
     }
-
     private fun handleError(currentState: ContactsUiState, errorUiText: UiText): ContactsUiState {
         currentState.users.isNotEmpty().let { hasContent ->
             return if (hasContent) {
@@ -133,7 +127,6 @@ class ContactsViewModel(
             }
         }
     }
-
     private fun setupConnectivityObserver() {
         connectivityObserver.observe()
             .distinctUntilChanged()
@@ -149,7 +142,6 @@ class ContactsViewModel(
                 }
             }.launchIn(viewModelScope)
     }
-
     private fun sendEffect(effect: UiEffect) {
         viewModelScope.launch {
             _uiEffect.emit(effect)

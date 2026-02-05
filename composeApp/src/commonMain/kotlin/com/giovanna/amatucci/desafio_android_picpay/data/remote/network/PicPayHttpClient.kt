@@ -13,13 +13,15 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-
 data class HttpClientConfig(
-    val baseUrl: String, val debug: Boolean, val requestTimeout: Long, val connectTimeout: Long
+    val baseUrl: String,
+    val debug: Boolean,
+    val requestTimeout: Long,
+    val connectTimeout: Long
 )
-
 class PicPayHttpClient(
-    private val config: HttpClientConfig, private val logWriter: LogWriter
+    private val config: HttpClientConfig,
+    private val logWriter: LogWriter
 ) {
     private val client by lazy {
         HttpClient {
@@ -27,7 +29,6 @@ class PicPayHttpClient(
                 requestTimeoutMillis = config.requestTimeout
                 connectTimeoutMillis = config.connectTimeout
             }
-
             install(ContentNegotiation) {
                 json(Json {
                     prettyPrint = true
@@ -35,13 +36,11 @@ class PicPayHttpClient(
                     ignoreUnknownKeys = true
                 })
             }
-
             defaultRequest {
                 contentType(ContentType.Application.Json)
                 val safeUrl = config.baseUrl.trim().replace("\"", "")
                 url(safeUrl)
             }
-
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {

@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.giovanna.amatucci.desafio_android_picpay.presentation.feature.ContactsListScreen
-
 @Composable
 fun AppNavHost(
     navController: NavHostController,

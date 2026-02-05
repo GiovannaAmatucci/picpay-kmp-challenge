@@ -23,27 +23,22 @@ class NetworkConnectivityObserver(
                     super.onAvailable(network)
                     trySend(ConnectivityObserver.Status.Available)
                 }
-
                 override fun onLosing(network: Network, maxMsToLive: Int) {
                     super.onLosing(network, maxMsToLive)
                     trySend(ConnectivityObserver.Status.Losing)
                 }
-
                 override fun onLost(network: Network) {
                     super.onLost(network)
                     trySend(ConnectivityObserver.Status.Lost)
                 }
-
                 override fun onUnavailable() {
                     super.onUnavailable()
                     trySend(ConnectivityObserver.Status.Unavailable)
                 }
             }
-
-            val request =
-                NetworkRequest.Builder().addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                    .build()
-
+            val request = NetworkRequest.Builder()
+                .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                .build()
             connectivityManager.registerNetworkCallback(request, callback)
             awaitClose {
                 connectivityManager.unregisterNetworkCallback(callback)

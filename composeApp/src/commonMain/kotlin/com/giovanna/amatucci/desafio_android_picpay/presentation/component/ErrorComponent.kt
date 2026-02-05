@@ -13,7 +13,6 @@ import com.giovanna.amatucci.desafio_android_picpay.error_title
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import com.giovanna.amatucci.desafio_android_picpay.util.UiText
 import org.jetbrains.compose.resources.stringResource
-
 @Composable
 fun ErrorComponent(
     message: UiText, modifier: Modifier = Modifier

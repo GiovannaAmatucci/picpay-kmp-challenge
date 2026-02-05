@@ -7,7 +7,6 @@ import kotlinx.coroutines.delay
 class FakePicPayApi : PicPayApi {
     var resultToReturn: ResultWrapper<List<UserResponse>> = ResultWrapper.NetworkError
     var delayMillis: Long = 0
-
     override suspend fun getUsers(): ResultWrapper<List<UserResponse>> {
         delay(delayMillis)
         return resultToReturn

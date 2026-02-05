@@ -1,5 +1,4 @@
 package com.giovanna.amatucci.desafio_android_picpay.util
-
 object LogMessages {
     // Repository - Fluxo Principal
     const val REPO_CHECK_CACHE = "🔍 Verificando cache... Itens encontrados: %d"
@@ -19,7 +18,6 @@ object LogMessages {
     const val VM_PROCESS_START = "🔄 Iniciando loadUsers (isRefresh: %b)"
     const val VM_STATE_SUCCESS = "✨ Estado SUCCESS emitido | Itens: %d"
     const val VM_STATE_ERROR = "🔥 Estado ERROR emitido | Erro: %s"
-
     const val VM_STATE_LOADING_NETWORK = "🌐 Internet Conectada: Auto-refresh iniciado..."
     const val VM_STATE_NETWORK_FAILURE = "🔌 Internet Perdida"
 
@@ -27,13 +25,9 @@ object LogMessages {
     const val API_DATA_MAPPED = "API Success: Mapeamento de dados bem-sucedido"
     const val API_GET_USERS_ERROR = " Erro de servidor. Status: %d"
     const val API_GET_USERS_CLIENT_EXCEPTION = "Falha na requisição (ClientException): %s"
-    const val API_GET_USERS_IO_EXCEPTION = " Falha de conexão/IO: %s"
-
     const val API_GET_USERS_NETWORK_ERROR = "Sem conexão: Host desconhecido"
-    const val API_GET_USERS_CONNECT_EXCEPTION = "Sem conexão: Falha ao conectar"
     const val API_GET_USERS_EXCEPTION = "Erro inesperado: %s"
 }
-
 object ErrorFormat {
     const val ERR_FORMAT_GENERIC = "Code: %d | Msg: %s"
     const val ERR_FORMAT_NETWORK = "Sem conexão com a internet (NetworkError)"

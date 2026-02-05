@@ -30,29 +30,28 @@ class ContactsRepositoryImpl(
     override fun getUsers(forceRefresh: Boolean): Flow<ResultWrapper<List<UserInfo>>> = flow {
         val localData = userDao.getAllUsers().first()
         val hasCachedData = localData.isNotEmpty()
-
         logWriter.d(tag, "${LogMessages.REPO_CHECK_CACHE}.${localData.size}")
 
         if (hasCachedData) {
             emit(ResultWrapper.Success(localData.toDomainList()))
         }
+
         val shouldFetch = forceRefresh || !hasCachedData
-        logWriter.d(
-            tag, LogMessages.REPO_DECISION
-        )
+        logWriter.d(tag, LogMessages.REPO_DECISION)
 
         if (shouldFetch) {
             logWriter.d(tag, LogMessages.REPO_NETWORK_START)
-
             try {
                 api.getUsers().let { apiResult ->
                     when (apiResult) {
                         is ResultWrapper.Success -> {
-                            val items = apiResult.value
-                            logWriter.d(tag, "${LogMessages.REPO_NETWORK_SUCCESS}.${items.size}")
-                            userDao.updateContacts(items.toEntityList())
+                            apiResult.value.let { items ->
+                                logWriter.d(
+                                    tag, "${LogMessages.REPO_NETWORK_SUCCESS}.${items.size}"
+                                )
+                                userDao.updateContacts(items.toEntityList())
+                            }
                         }
-
                         is ResultWrapper.GenericError, is ResultWrapper.NetworkError -> {
                             handleApiError(apiResult, hasCachedData)
                             emit(apiResult)
@@ -71,14 +70,12 @@ class ContactsRepositoryImpl(
         }.distinctUntilChanged())
 
     }.flowOn(ioDispatcher)
-
     private fun handleApiError(result: ResultWrapper<List<UserInfo>>, hasCache: Boolean) {
         val errorDetails = when (result) {
             is ResultWrapper.GenericError -> "${ErrorFormat.ERR_FORMAT_GENERIC}.${result.code}.${result.message}"
             is ResultWrapper.NetworkError -> ErrorFormat.ERR_FORMAT_NETWORK
             else -> ErrorFormat.ERR_FORMAT_UNKNOWN
         }
-
         if (hasCache) {
             logWriter.w(tag, "${LogMessages.REPO_NETWORK_FAILURE}.$errorDetails")
         } else {

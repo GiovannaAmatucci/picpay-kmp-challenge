@@ -11,7 +11,6 @@ import com.giovanna.amatucci.desafio_android_picpay.util.LogWriter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import org.koin.dsl.module
-
 val iosModule = module {
     single { HttpClientConfig(
             baseUrl = AppConfig.BASE_URL,

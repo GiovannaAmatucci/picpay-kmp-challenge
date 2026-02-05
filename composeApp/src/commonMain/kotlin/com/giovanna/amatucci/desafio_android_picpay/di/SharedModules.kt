@@ -17,19 +17,13 @@ import org.koin.dsl.module
 
 val networkModule = module {
     single<HttpClient> {
-        PicPayHttpClient(
-            config = get(), logWriter = get()
-        ).invoke()
+        PicPayHttpClient(config = get(), logWriter = get()).invoke()
     }
-
     single<PicPayApi> { PicPayApiImpl(get(), get()) }
 }
 val domainModule = module {
     single<ContactsRepository> { ContactsRepositoryImpl(get(), get(), get(), get()) }
-
-
     factory<FetchContactsUseCase> { FetchContactsUseCaseImpl(get()) }
-
     single { get<AppDatabase>().contactUserDao() }
 }
 val viewModelModule = module {

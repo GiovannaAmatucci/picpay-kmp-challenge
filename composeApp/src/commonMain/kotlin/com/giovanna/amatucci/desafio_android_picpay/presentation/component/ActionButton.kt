@@ -12,7 +12,6 @@ import com.giovanna.amatucci.desafio_android_picpay.retry_button
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-
 @Composable
 fun ActionButton(
     onRetry: () -> Unit,

@@ -10,7 +10,6 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
 import kotlinx.io.IOException
-
 abstract class BaseApi(
     private val logWriter: LogWriter,
     private val tag: String = TAG.PICPAY_API_TAG

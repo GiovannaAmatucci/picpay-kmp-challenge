@@ -6,12 +6,12 @@ import com.giovanna.amatucci.desafio_android_picpay.di.initKoin
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 
-class PicPayApplication : Application() {
+class AndroidApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         initKoin {
             androidLogger()
-            androidContext(this@PicPayApplication)
+            androidContext(this@AndroidApplication)
             modules(androidModule)
         }
     }
