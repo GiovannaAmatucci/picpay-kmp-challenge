@@ -22,7 +22,7 @@ jobs:
       - name: Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Rodar Testes e Build Android
+      - name: Run Tests & Build (Android)
         run: ./gradlew assembleDebug testDebugUnitTest
 
   # 🍎  IOS
@@ -38,8 +38,8 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Configurar Gradle
+      - name: Gradle
         uses: gradle/actions/setup-gradle@v3
 
-      - name: Build iOS Framework
-        run: ./gradlew linkDebugFrameworkIosArm64
+      - name: Run Tests (IOS)
+        run: ./gradlew iosSimulatorArm64Test
