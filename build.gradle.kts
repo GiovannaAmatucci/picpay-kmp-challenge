@@ -14,6 +14,7 @@ plugins {
     // 🛠️ Room & KSP
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.room) apply false
+    alias(libs.plugins.buildkonfig) apply false
 }
 
 tasks.register("clean", Delete::class) {

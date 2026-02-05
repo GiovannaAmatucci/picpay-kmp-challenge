@@ -1,6 +1,7 @@
 package com.giovanna.amatucci.desafio_android_picpay.di
 
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.giovanna.amatucci.desafio_android_picpay.AppConfig
 import com.giovanna.amatucci.desafio_android_picpay.data.local.db.AppDatabase
 import com.giovanna.amatucci.desafio_android_picpay.data.local.db.getDatabaseBuilder
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.network.HttpClientConfig
@@ -13,10 +14,10 @@ import org.koin.dsl.module
 
 val iosModule = module {
     single { HttpClientConfig(
-            baseUrl = "https://609a908e0f5a13001721b74e.mockapi.io/picpay/api/",
-            debug = true,
-            requestTimeout = 20_000L,
-            connectTimeout = 15_000L
+            baseUrl = AppConfig.BASE_URL,
+            debug = AppConfig.DEBUG_MODE,
+            requestTimeout = AppConfig.REQUEST_TIMEOUT,
+            connectTimeout = AppConfig.CONNECT_TIMEOUT
         )
     }
     single<AppDatabase> {

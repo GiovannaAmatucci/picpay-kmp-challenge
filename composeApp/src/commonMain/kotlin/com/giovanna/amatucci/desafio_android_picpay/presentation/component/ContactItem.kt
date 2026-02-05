@@ -43,7 +43,7 @@ fun ContactItem(
                     .build(),
                 contentDescription = stringResource(resource = Res.string.contact_avatar_description, name),
                 placeholder = painterResource(Res.drawable.ic_launcher_round),
-                error = painterResource( Res.drawable.ic_launcher_round),
+                error = painterResource(Res.drawable.ic_launcher_round),
                 modifier = Modifier
                     .size(AppTheme.dimens.iconAvatarSize)
                     .clip(CircleShape),

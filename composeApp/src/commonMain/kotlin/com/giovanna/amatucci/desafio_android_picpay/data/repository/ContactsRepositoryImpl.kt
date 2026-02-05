@@ -56,7 +56,6 @@ class ContactsRepositoryImpl(
                         is ResultWrapper.GenericError, is ResultWrapper.NetworkError -> {
                             handleApiError(apiResult, hasCachedData)
                             emit(apiResult)
-
                             if (!hasCachedData) return@flow
                         }
                     }
