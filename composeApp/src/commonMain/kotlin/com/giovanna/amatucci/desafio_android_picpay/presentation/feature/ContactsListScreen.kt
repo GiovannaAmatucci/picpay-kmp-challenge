@@ -2,8 +2,10 @@ package com.giovanna.amatucci.desafio_android_picpay.presentation.feature
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +15,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,14 +30,19 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.giovanna.amatucci.desafio_android_picpay.Res
 import com.giovanna.amatucci.desafio_android_picpay.empty_state_message
+import com.giovanna.amatucci.desafio_android_picpay.getPlatform
 import com.giovanna.amatucci.desafio_android_picpay.presentation.component.ActionButton
+import com.giovanna.amatucci.desafio_android_picpay.presentation.component.AppScrollbar
 import com.giovanna.amatucci.desafio_android_picpay.presentation.component.ErrorComponent
 import com.giovanna.amatucci.desafio_android_picpay.presentation.component.PullToRefreshContactList
+import com.giovanna.amatucci.desafio_android_picpay.presentation.component.RefreshButton
+import com.giovanna.amatucci.desafio_android_picpay.title
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import com.giovanna.amatucci.desafio_android_picpay.util.UiText
 import kotlinx.coroutines.flow.collectLatest
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+
 @Composable
 fun ContactsListScreen(
     viewModel: ContactsViewModel = koinViewModel()
@@ -74,9 +83,25 @@ internal fun ContactsListContent(
     onEvent: (ContactsUiEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    val refreshState = getPlatform().showRefreshButton
+
     state.apply {
         Scaffold(
-            modifier = modifier, snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+            modifier = modifier,
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+            topBar = {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(Res.string.title))
+                    }, actions = {
+                        if (refreshState) RefreshButton { onEvent(ContactsUiEvent.OnRefresh) }
+                    }, colors = TopAppBarDefaults.topAppBarColors(
+                        if (refreshState) MaterialTheme.colorScheme.onBackground
+                        else MaterialTheme.colorScheme.background
+                    )
+                )
+            }
         ) { contentPadding ->
             Surface(
                 modifier = Modifier
@@ -88,8 +113,12 @@ internal fun ContactsListContent(
                     Box(modifier = Modifier.testTag(TestTags.CONTENT_LIST)) {
                         PullToRefreshContactList(
                             users = users,
-                            isRefreshing = isRefreshing,
+                            isRefreshing = isRefreshing, state = listState,
                             onRefresh = { onEvent(ContactsUiEvent.OnRefresh) })
+                        AppScrollbar(
+                            state = listState,
+                            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight()
+                        )
                     }
                 } else {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

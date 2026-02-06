@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
@@ -22,6 +23,9 @@ kotlin {
         }
     }
 
+    // 🖥️ Desktop (Windows/Linux/macOS) -> NOVO
+    jvm("desktop")
+
     // 🍎 iOS
     listOf(
         iosX64(),
@@ -44,6 +48,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(compose.materialIconsExtended)
 
             // Architecture (ViewModel & Navigation)
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -91,9 +96,39 @@ kotlin {
             implementation(libs.androidx.compose.ui.tooling.preview)
         }
 
+        // 🖥️ DESKTOP MAIN
+        val desktopMain by getting {
+            dependencies {
+                implementation(compose.desktop.currentOs)
+                implementation(libs.ktor.client.okhttp)
+                implementation(libs.kotlinx.coroutines.swing)
+            }
+        }
+
         // 🍎 IOS MAIN
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+    }
+}
+
+// 📦 Desktop Packaging Configuration (.exe /.msi)
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "PicPayKMP"
+            packageVersion = "1.0.0"
+
+            description = "PicPay Challenge KMP Desktop App"
+            copyright = "© 2026 Giovanna Amatucci"
+            vendor = "Giovanna Amatucci"
+
+            windows {
+                menu = true
+            }
         }
     }
 }
@@ -158,6 +193,7 @@ room {
 dependencies {
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
     add("kspAndroid", libs.androidx.room.compiler)
+    add("kspDesktop", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)

@@ -1,8 +1,12 @@
 package com.giovanna.amatucci.desafio_android_picpay.presentation.component
 
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -12,6 +16,7 @@ import com.giovanna.amatucci.desafio_android_picpay.retry_button
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
+
 @Composable
 fun ActionButton(
     onRetry: () -> Unit,
@@ -27,5 +32,18 @@ fun ActionButton(
         )
     ) {
         Text(stringResource(text))
+    }
+}
+
+@Composable
+fun RefreshButton(
+    onRefresh: () -> Unit
+) {
+    IconButton(onClick = onRefresh) {
+        Icon(
+            Icons.Default.Refresh,
+            contentDescription = stringResource(Res.string.retry_button),
+            tint = MaterialTheme.colorScheme.primary
+        )
     }
 }
