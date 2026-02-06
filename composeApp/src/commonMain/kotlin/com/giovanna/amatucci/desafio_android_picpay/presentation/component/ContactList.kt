@@ -1,46 +1,56 @@
 package com.giovanna.amatucci.desafio_android_picpay.presentation.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import com.giovanna.amatucci.desafio_android_picpay.Res
 import com.giovanna.amatucci.desafio_android_picpay.domain.model.UserInfo
-import com.giovanna.amatucci.desafio_android_picpay.title
+import com.giovanna.amatucci.desafio_android_picpay.getPlatform
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
-import org.jetbrains.compose.resources.stringResource
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PullToRefreshContactList(
-    users: List<UserInfo>, isRefreshing: Boolean, onRefresh: () -> Unit
+    users: List<UserInfo>,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
+    state: LazyListState,
+    modifier: Modifier = Modifier
 ) {
-    PullToRefreshBox(
-        isRefreshing = isRefreshing, onRefresh = onRefresh, modifier = Modifier.fillMaxSize()
-    ) {
-        ContactList(users = users)
+    val usePullGesture = getPlatform().supportsPullToRefresh
+
+    if (usePullGesture) {
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            onRefresh = onRefresh,
+            modifier = modifier,
+            state = PullToRefreshState(),
+        ) {
+            ContactList(users = users, state = state)
+        }
+    } else {
+        Box(modifier = modifier) {
+            ContactList(users = users, state = state)
+            if (isRefreshing) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center).padding(AppTheme.dimens.paddingMedium)
+                )
+            }
+        }
     }
 }
 @Composable
-private fun ContactList(users: List<UserInfo>) {
-    LazyColumn(modifier = Modifier.fillMaxSize()) {
-        item {
-            Text(
-                text = stringResource(Res.string.title),
-                style = MaterialTheme.typography.headlineLarge.copy(fontWeight = FontWeight.Bold),
-                modifier = Modifier.padding(
-                    start = AppTheme.dimens.paddingLarge,
-                    top = AppTheme.dimens.paddingExtraLarge,
-                    bottom = AppTheme.dimens.paddingLarge
-                )
-            )
-        }
+private fun ContactList(users: List<UserInfo>, state: LazyListState) {
+    LazyColumn(modifier = Modifier.fillMaxSize(), state = state) {
         items(
             items = users, key = { user -> user.id }) { user ->
             ContactItem(user)

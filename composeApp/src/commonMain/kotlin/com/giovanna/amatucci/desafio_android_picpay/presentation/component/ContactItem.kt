@@ -50,7 +50,7 @@ fun ContactItem(
             Column(modifier = Modifier.padding(start = AppTheme.dimens.paddingLarge)) {
                 Text(
                     text = "@${userInfo.username}",
-                    color = MaterialTheme.colorScheme.onBackground,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
