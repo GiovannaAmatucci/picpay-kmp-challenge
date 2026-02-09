@@ -2,6 +2,8 @@ package com.giovanna.amatucci.desafio_android_picpay.util
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import java.io.DataInputStream
+import java.io.DataOutputStream
 import java.io.InputStream
 import java.io.OutputStream
 import java.security.KeyStore
@@ -41,26 +43,25 @@ class CryptoManager {
     fun encrypt(bytes: ByteArray, outputStream: OutputStream): ByteArray {
         val cipher = encryptCipher
         val encryptedBytes = cipher.doFinal(bytes)
-        outputStream.use {
-            it.write(cipher.iv.size)
-            it.write(cipher.iv)
-            it.write(encryptedBytes.size)
-            it.write(encryptedBytes)
-        }
+        val dataOutputStream = DataOutputStream(outputStream)
+        dataOutputStream.writeInt(cipher.iv.size)
+        dataOutputStream.write(cipher.iv)
+        dataOutputStream.writeInt(encryptedBytes.size)
+        dataOutputStream.write(encryptedBytes)
         return encryptedBytes
     }
     fun decrypt(inputStream: InputStream): ByteArray {
-        return inputStream.use {
-            val ivSize = it.read()
-            val iv = ByteArray(ivSize)
-            it.read(iv)
+        val dataInputStream = DataInputStream(inputStream)
+        val ivSize = dataInputStream.readInt()
+        val iv = ByteArray(ivSize)
+        dataInputStream.readFully(iv)
 
-            val encryptedSize = it.read()
-            val encryptedBytes = it.readBytes()
+        val encryptedSize = dataInputStream.readInt()
+        val encryptedBytes = ByteArray(encryptedSize)
+        dataInputStream.readFully(encryptedBytes)
 
-            val cipher = getDecryptCipherForIv(iv)
-            cipher.doFinal(encryptedBytes)
-        }
+        val cipher = getDecryptCipherForIv(iv)
+        return cipher.doFinal(encryptedBytes)
     }
     companion object {
         private const val ALGORITHM = KeyProperties.KEY_ALGORITHM_AES

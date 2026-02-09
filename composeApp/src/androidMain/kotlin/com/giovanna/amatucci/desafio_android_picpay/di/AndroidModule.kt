@@ -33,14 +33,15 @@ val androidModule = module {
         val cryptoManager = get<CryptoManager>()
         val keyFile = File(context.filesDir, "safe_db_key.bin")
 
-        val passphrase: ByteArray = if (keyFile.exists()) {
-            try {
+        val passphrase: ByteArray = try {
+            if (keyFile.exists()) {
                 cryptoManager.decrypt(FileInputStream(keyFile))
-            } catch (e: Exception) {
-                keyFile.delete()
+            } else {
                 generateAndSaveKey(cryptoManager, keyFile)
             }
-        } else {
+        } catch (e: Exception) {
+            context.deleteDatabase(AppConfig.DATABASE_NAME)
+            keyFile.delete()
             generateAndSaveKey(cryptoManager, keyFile)
         }
 
