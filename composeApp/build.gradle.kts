@@ -115,7 +115,7 @@ kotlin {
 // 📦 Desktop Packaging Configuration (.exe /.msi)
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "com.giovanna.amatucci.desafio_android_picpay.DesktopApplicationKt"
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
@@ -182,6 +182,7 @@ android {
 
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 

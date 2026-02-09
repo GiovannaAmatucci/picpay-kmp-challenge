@@ -13,9 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.giovanna.amatucci.desafio_android_picpay.Res
 import com.giovanna.amatucci.desafio_android_picpay.contact_avatar_description
 import com.giovanna.amatucci.desafio_android_picpay.domain.model.UserInfo
@@ -23,6 +20,7 @@ import com.giovanna.amatucci.desafio_android_picpay.ic_launcher_round
 import com.giovanna.amatucci.desafio_android_picpay.ui.theme.AppTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+
 @Composable
 fun ContactItem(
     userInfo: UserInfo,
@@ -38,8 +36,7 @@ fun ContactItem(
     ) {
         userInfo.apply {
             AsyncImage(
-                model = ImageRequest.Builder(LocalPlatformContext.current).data(img).crossfade(true)
-                    .build(),
+                model = img,
                 contentDescription = stringResource(resource = Res.string.contact_avatar_description, name),
                 placeholder = painterResource(Res.drawable.ic_launcher_round),
                 error = painterResource(Res.drawable.ic_launcher_round),

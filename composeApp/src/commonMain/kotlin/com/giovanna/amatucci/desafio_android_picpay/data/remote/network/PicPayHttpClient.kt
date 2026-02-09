@@ -17,7 +17,7 @@ data class HttpClientConfig(
     val baseUrl: String,
     val debug: Boolean,
     val requestTimeout: Long,
-    val connectTimeout: Long
+    val connectTimeout: Long,
 )
 class PicPayHttpClient(
     private val config: HttpClientConfig,
@@ -47,7 +47,7 @@ class PicPayHttpClient(
                         logWriter.d(TAG.NET_TAG, message)
                     }
                 }
-                level = if (config.debug) LogLevel.ALL else LogLevel.INFO
+                level = if (config.debug) LogLevel.ALL else LogLevel.NONE
             }
         }
     }

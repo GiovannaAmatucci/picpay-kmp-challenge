@@ -10,6 +10,8 @@ import io.ktor.client.plugins.ServerResponseException
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.isSuccess
 import kotlinx.io.IOException
+import kotlin.coroutines.cancellation.CancellationException
+
 abstract class BaseApi(
     private val logWriter: LogWriter,
     private val tag: String = TAG.PICPAY_API_TAG
@@ -52,6 +54,11 @@ abstract class BaseApi(
             ResultWrapper.NetworkError
 
         } catch (e: Exception) {
+            val msg = "${LogMessages.API_GET_USERS_EXCEPTION}: ${e.message}"
+            logWriter.e(tag, msg)
+            ResultWrapper.GenericError(null, msg)
+        } catch (e: Exception) {
+            if (e is CancellationException) throw e
             val msg = "${LogMessages.API_GET_USERS_EXCEPTION}: ${e.message}"
             logWriter.e(tag, msg)
             ResultWrapper.GenericError(null, msg)
