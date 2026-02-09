@@ -1,7 +1,5 @@
 package com.giovanna.amatucci.desafio_android_picpay.util
 
-import kotlinx.cinterop.CPointed
-import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.alloc
@@ -13,7 +11,6 @@ import platform.CoreFoundation.CFDictionaryRef
 import platform.CoreFoundation.CFRetain
 import platform.CoreFoundation.kCFBooleanTrue
 import platform.Foundation.CFBridgingRelease
-import platform.Foundation.NSCopyingProtocol
 import platform.Foundation.NSData
 import platform.Foundation.NSMutableDictionary
 import platform.Foundation.create
@@ -29,31 +26,28 @@ import platform.Security.kSecMatchLimit
 import platform.Security.kSecMatchLimitOne
 import platform.Security.kSecReturnData
 import platform.Security.kSecValueData
-import platform.posix.memcpy
-
 @OptIn(ExperimentalForeignApi::class)
 class KeychainHelper {
     private val service = "com.giovanna.picpay.database"
     private val account = "db_key"
-
     fun saveKey(key: ByteArray) {
-        val query = createQuery().apply {
-            setObject(value = key.toNSData(), forKey = kSecValueData.bridgeKey())
-        }
-
-        SecItemDelete(query as CFDictionaryRef)
-        SecItemAdd(query as CFDictionaryRef, null)
+        val query = createQuery()
+        query.setObject(anObject = key.toNSData(), forKey = kSecValueData.toNsCopying())
+        SecItemDelete(query.asCFDictionary())
+        SecItemAdd(query.asCFDictionary(), null)
     }
-
     fun getKey(): ByteArray? {
-        val query = createQuery().apply {
-            setObject(value = kCFBooleanTrue.bridge(), forKey = kSecReturnData.bridgeKey())
-            setObject(value = kSecMatchLimitOne.bridge(), forKey = kSecMatchLimit.bridgeKey())
-        }
+        val query = createQuery()
+        query.setObject(
+            anObject = kCFBooleanTrue.toNsObject(), forKey = kSecReturnData.toNsCopying()
+        )
+        query.setObject(
+            anObject = kSecMatchLimitOne.toNsObject(), forKey = kSecMatchLimit.toNsCopying()
+        )
 
         memScoped {
             val result = alloc<platform.CoreFoundation.CFTypeRefVar>()
-            val status = SecItemCopyMatching(query as CFDictionaryRef, result.ptr)
+            val status = SecItemCopyMatching(query.asCFDictionary(), result.ptr)
 
             if (status == errSecSuccess) {
                 val data = CFBridgingRelease(result.value) as? NSData
@@ -64,23 +58,36 @@ class KeychainHelper {
     }
 
     private fun createQuery(): NSMutableDictionary {
-        return NSMutableDictionary().apply {
-            setObject(value = kSecClassGenericPassword.bridge(), forKey = kSecClass.bridgeKey())
-            setObject(value = service, forKey = kSecAttrService.bridgeKey())
-            setObject(value = account, forKey = kSecAttrAccount.bridgeKey())
-        }
+        val query = NSMutableDictionary()
+        query.setObject(
+            anObject = kSecClassGenericPassword.toNsObject(), forKey = kSecClass.toNsCopying()
+        )
+        query.setObject(anObject = service as Any, forKey = kSecAttrService.toNsCopying())
+        query.setObject(anObject = account as Any, forKey = kSecAttrAccount.toNsCopying())
+        return query
     }
 
-    private fun CPointer<*>?.bridge(): Any {
-        if (this == null) return ""
-        val genericPtr = this as CPointer<CPointed>
-        return CFBridgingRelease(CFRetain(genericPtr)) as Any
+    private fun Any?.toNsCopying(): platform.Foundation.NSCopyingProtocol {
+        val ptr = (this as? kotlinx.cinterop.CPointer<*>)
+            ?: return this as platform.Foundation.NSCopyingProtocol
+        return CFBridgingRelease(CFRetain(ptr)) as platform.Foundation.NSCopyingProtocol
     }
 
-    private fun CPointer<*>?.bridgeKey(): NSCopyingProtocol {
-        if (this == null) throw IllegalStateException("Null key")
-        val genericPtr = this as CPointer<CPointed>
-        return CFBridgingRelease(CFRetain(genericPtr)) as NSCopyingProtocol
+    private fun Any?.toNsObject(): Any {
+        val ptr = (this as? kotlinx.cinterop.CPointer<*>) ?: return this as Any
+        return CFBridgingRelease(CFRetain(ptr)) as Any
+    }
+
+    private fun NSMutableDictionary.asCFDictionary(): CFDictionaryRef? {
+        return (this as Any).reinterpret()
+    }
+
+    private inline fun <reified T : kotlinx.cinterop.CPointed> Any.reinterpret(): kotlinx.cinterop.CPointer<T>? {
+        return CFBridgingRetain(this) as? kotlinx.cinterop.CPointer<T>
+    }
+
+    private fun CFBridgingRetain(obj: Any): kotlinx.cinterop.CPointer<*>? {
+        return platform.Foundation.CFBridgingRetain(obj)
     }
 
     private fun ByteArray.toNSData(): NSData = memScoped {
@@ -93,15 +100,10 @@ class KeychainHelper {
     private fun NSData.toByteArray(): ByteArray = ByteArray(this.length.toInt()).apply {
         if (this.isNotEmpty()) {
             usePinned { pinned ->
-                memcpyChain(
+                platform.posix.memcpy(
                     pinned.addressOf(0), this@toByteArray.bytes, this@toByteArray.length.toULong()
                 )
             }
         }
     }
-}
-
-@OptIn(ExperimentalForeignApi::class)
-private fun memcpyChain(dest: CPointer<*>, src: CPointer<*>, size: ULong) {
-    memcpy(dest, src, size)
 }

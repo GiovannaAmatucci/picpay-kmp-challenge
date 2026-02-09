@@ -34,24 +34,31 @@ val iosModule = module {
     single<AppDatabase> {
         val keychain = get<KeychainHelper>()
         var keyBytes = keychain.getKey()
+
         if (keyBytes == null) {
-            val newKey = generateSecureRandomKey()
-            keychain.saveKey(newKey)
-            keyBytes = newKey
-            println("IOS: Nova chave de criptografia gerada e salva no Keychain.")
+            println("IOS DATABASE: Nenhuma chave encontrada. Gerando nova chave segura...")
+            keyBytes = generateSecureRandomKey()
+            keychain.saveKey(keyBytes)
         } else {
-            println("IOS: Chave de criptografia recuperada do Keychain com sucesso.")
+            println("IOS DATABASE: Chave recuperada do Keychain com sucesso.")
         }
-        getDatabaseBuilder().setDriver(BundledSQLiteDriver()).build()
+
+        val builder = getDatabaseBuilder()
+        builder.setDriver(BundledSQLiteDriver())
+        builder.build()
     }
 }
-
 @OptIn(ExperimentalForeignApi::class)
 private fun generateSecureRandomKey(): ByteArray {
     val size = 32
     val key = ByteArray(size)
-    key.usePinned { pinned ->
+    val status = key.usePinned { pinned ->
         SecRandomCopyBytes(kSecRandomDefault, size.convert(), pinned.addressOf(0))
     }
+
+    if (status != 0) {
+        throw IllegalStateException("Falha crítica ao gerar aleatoriedade segura no iOS via SecRandomCopyBytes")
+    }
+
     return key
 }
