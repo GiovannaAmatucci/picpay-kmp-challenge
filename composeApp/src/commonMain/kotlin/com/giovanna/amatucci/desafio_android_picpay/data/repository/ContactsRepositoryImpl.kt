@@ -11,6 +11,7 @@ import com.giovanna.amatucci.desafio_android_picpay.util.LogMessages
 import com.giovanna.amatucci.desafio_android_picpay.util.LogWriter
 import com.giovanna.amatucci.desafio_android_picpay.util.ResultWrapper
 import com.giovanna.amatucci.desafio_android_picpay.util.TAG
+import com.giovanna.amatucci.desafio_android_picpay.util.format
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -30,14 +31,16 @@ class ContactsRepositoryImpl(
     override fun getUsers(forceRefresh: Boolean): Flow<ResultWrapper<List<UserInfo>>> = flow {
         val localData = userDao.getAllUsers().first()
         val hasCachedData = localData.isNotEmpty()
-        logWriter.d(tag, "${LogMessages.REPO_CHECK_CACHE}.${localData.size}")
+        logWriter.d(tag, LogMessages.REPO_CHECK_CACHE.format(localData.size))
 
         if (hasCachedData) {
             emit(ResultWrapper.Success(localData.toDomainList()))
         }
 
         val shouldFetch = forceRefresh || !hasCachedData
-        logWriter.d(tag, LogMessages.REPO_DECISION)
+        logWriter.d(
+            tag, LogMessages.REPO_DECISION.format(forceRefresh, !hasCachedData, shouldFetch)
+        )
 
         if (shouldFetch) {
             logWriter.d(tag, LogMessages.REPO_NETWORK_START)
@@ -47,11 +50,12 @@ class ContactsRepositoryImpl(
                         is ResultWrapper.Success -> {
                             apiResult.value.let { items ->
                                 logWriter.d(
-                                    tag, "${LogMessages.REPO_NETWORK_SUCCESS}.${items.size}"
+                                    tag, LogMessages.REPO_NETWORK_SUCCESS.format(items.size)
                                 )
                                 userDao.updateContacts(items.toEntityList())
                             }
                         }
+
                         is ResultWrapper.GenericError, is ResultWrapper.NetworkError -> {
                             handleApiError(apiResult, hasCachedData)
                             emit(apiResult)
@@ -70,14 +74,18 @@ class ContactsRepositoryImpl(
         }.distinctUntilChanged())
 
     }.flowOn(ioDispatcher)
+
     private fun handleApiError(result: ResultWrapper<List<UserInfo>>, hasCache: Boolean) {
         val errorDetails = when (result) {
-            is ResultWrapper.GenericError -> "${ErrorFormat.ERR_FORMAT_GENERIC}.${result.code}.${result.message}"
+            is ResultWrapper.GenericError -> ErrorFormat.ERR_FORMAT_GENERIC.format(
+                result.code ?: -1, result.message
+            )
+
             is ResultWrapper.NetworkError -> ErrorFormat.ERR_FORMAT_NETWORK
             else -> ErrorFormat.ERR_FORMAT_UNKNOWN
         }
         if (hasCache) {
-            logWriter.w(tag, "${LogMessages.REPO_NETWORK_FAILURE}.$errorDetails")
+            logWriter.w(tag, LogMessages.REPO_NETWORK_FAILURE.format(errorDetails))
         } else {
             logWriter.e(tag, LogMessages.REPO_CRITICAL_ERROR)
         }

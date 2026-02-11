@@ -1,5 +1,6 @@
 package com.giovanna.amatucci.desafio_android_picpay.di
 
+import com.giovanna.amatucci.desafio_android_picpay.Platform
 import com.giovanna.amatucci.desafio_android_picpay.data.local.db.AppDatabase
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.api.PicPayApi
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.api.PicPayApiImpl
@@ -8,6 +9,7 @@ import com.giovanna.amatucci.desafio_android_picpay.data.repository.ContactsRepo
 import com.giovanna.amatucci.desafio_android_picpay.domain.repository.ContactsRepository
 import com.giovanna.amatucci.desafio_android_picpay.domain.usecase.FetchContactsUseCase
 import com.giovanna.amatucci.desafio_android_picpay.domain.usecase.FetchContactsUseCaseImpl
+import com.giovanna.amatucci.desafio_android_picpay.getPlatform
 import com.giovanna.amatucci.desafio_android_picpay.presentation.feature.ContactsViewModel
 import io.ktor.client.HttpClient
 import kotlinx.coroutines.Dispatchers
@@ -31,5 +33,6 @@ val viewModelModule = module {
 }
 val coreModule = module {
     single { Dispatchers.IO }
+    single<Platform> { getPlatform() }
 }
 val sharedModules = listOf(networkModule, domainModule, viewModelModule, coreModule)
