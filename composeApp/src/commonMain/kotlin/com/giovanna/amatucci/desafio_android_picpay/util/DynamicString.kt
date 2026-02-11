@@ -23,4 +23,16 @@ sealed interface UiText {
             is StringResource -> getString(res, *args)
         }
     }
+
+}
+
+fun String.format(vararg args: Any?): String {
+    var formatted = this
+    args.forEach { arg ->
+        val regex = Regex("%[sdb]")
+        if (regex.containsMatchIn(formatted)) {
+            formatted = formatted.replaceFirst(regex, arg.toString())
+        }
+    }
+    return formatted
 }

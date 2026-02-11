@@ -2,11 +2,11 @@ package com.giovanna.amatucci.desafio_android_picpay.util
 object LogMessages {
     // Repository - Fluxo Principal
     const val REPO_CHECK_CACHE = "🔍 Verificando cache... Itens encontrados: %d"
-    const val REPO_DECISION = "🤔 Decisão de Rede: ForceRefresh=%b | CacheVazio=%b -> Buscando? %b"
+    const val REPO_DECISION = "🤔 Decisão de Rede: ForceRefresh = %b | CacheVazio = %b -> Buscando? %b"
 
     // --- Repository: Fluxo de Rede ---
     const val REPO_NETWORK_START = "🚀 Buscando dados da API..."
-    const val REPO_NETWORK_SUCCESS = "✅ API Sucesso: Atualizando banco local com %d itens"
+    const val REPO_NETWORK_SUCCESS = "✅ API Sucesso: Atualizando banco local com %s itens"
     const val REPO_NETWORK_FAILURE = "⚠️ Falha no Refresh (Fallback ativo). Erro: %s"
 
     // --- Repository: Erros Graves ---

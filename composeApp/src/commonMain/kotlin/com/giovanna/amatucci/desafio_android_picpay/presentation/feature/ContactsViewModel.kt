@@ -13,6 +13,7 @@ import com.giovanna.amatucci.desafio_android_picpay.util.LogWriter
 import com.giovanna.amatucci.desafio_android_picpay.util.ResultWrapper
 import com.giovanna.amatucci.desafio_android_picpay.util.TAG
 import com.giovanna.amatucci.desafio_android_picpay.util.UiText
+import com.giovanna.amatucci.desafio_android_picpay.util.format
 import com.giovanna.amatucci.desafio_android_picpay.util.toUiText
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -74,7 +75,7 @@ class ContactsViewModel(
     }
     private suspend fun fetchContacts(forceRefresh: Boolean) {
         fetchContactsUseCase(forceRefresh).onStart {
-            logWriter.d(tag, "${LogMessages.VM_PROCESS_START}: $forceRefresh")
+            logWriter.d(tag, LogMessages.VM_PROCESS_START.format(forceRefresh))
             _uiState.update { current ->
                 current.copy(
                     isRefreshing = forceRefresh, isLoading = current.users.isEmpty(), error = null
@@ -97,7 +98,7 @@ class ContactsViewModel(
         _uiState.update { currentState ->
             when (result) {
                 is ResultWrapper.Success -> {
-                    logWriter.d(tag, "${LogMessages.VM_STATE_SUCCESS}: ${result.value.size}")
+                    logWriter.d(tag, LogMessages.VM_STATE_SUCCESS.format(result.value.size))
                     currentState.copy(
                         isLoading = false, isRefreshing = false, users = result.value, error = null
                     )
@@ -109,7 +110,7 @@ class ContactsViewModel(
                 }
 
                 is ResultWrapper.GenericError -> {
-                    logWriter.e(tag, "${LogMessages.VM_STATE_ERROR}: ${result.message}")
+                    logWriter.e(tag, LogMessages.VM_STATE_ERROR.format(result.message))
                     handleError(currentState, result.toUiText())
                 }
             }

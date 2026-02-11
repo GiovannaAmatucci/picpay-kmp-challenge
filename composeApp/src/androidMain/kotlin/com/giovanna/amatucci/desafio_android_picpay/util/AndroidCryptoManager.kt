@@ -2,17 +2,17 @@ package com.giovanna.amatucci.desafio_android_picpay.util
 
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.io.InputStream
-import java.io.OutputStream
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
-class CryptoManager {
+class AndroidCryptoManager : CryptoManager {
     private val keyStore = KeyStore.getInstance("AndroidKeyStore").apply {
         load(null)
     }
@@ -40,18 +40,25 @@ class CryptoManager {
             )
         }.generateKey()
     }
-    fun encrypt(bytes: ByteArray, outputStream: OutputStream): ByteArray {
+    override fun encrypt(bytes: ByteArray): ByteArray {
         val cipher = encryptCipher
         val encryptedBytes = cipher.doFinal(bytes)
+
+        val outputStream = ByteArrayOutputStream()
         val dataOutputStream = DataOutputStream(outputStream)
+
         dataOutputStream.writeInt(cipher.iv.size)
         dataOutputStream.write(cipher.iv)
         dataOutputStream.writeInt(encryptedBytes.size)
         dataOutputStream.write(encryptedBytes)
-        return encryptedBytes
+
+        return outputStream.toByteArray()
     }
-    fun decrypt(inputStream: InputStream): ByteArray {
+
+    override fun decrypt(bytes: ByteArray): ByteArray {
+        val inputStream = ByteArrayInputStream(bytes)
         val dataInputStream = DataInputStream(inputStream)
+
         val ivSize = dataInputStream.readInt()
         val iv = ByteArray(ivSize)
         dataInputStream.readFully(iv)
