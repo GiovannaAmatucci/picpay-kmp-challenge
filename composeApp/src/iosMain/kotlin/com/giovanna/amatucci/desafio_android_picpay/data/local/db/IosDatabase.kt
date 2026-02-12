@@ -5,21 +5,21 @@ import androidx.room.RoomDatabase
 import kotlinx.cinterop.ExperimentalForeignApi
 import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
+import platform.Foundation.NSHomeDirectory
 import platform.Foundation.NSUserDomainMask
 
 @OptIn(ExperimentalForeignApi::class)
 fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
-    val fileManager = NSFileManager.defaultManager
-    val documentDirectory = fileManager.URLForDirectory(
+    val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,
         inDomain = NSUserDomainMask,
         appropriateForURL = null,
         create = false,
         error = null
     )
-    val dbPath = documentDirectory?.path + "/picpay.db"
+    val dbFilePath = (documentDirectory?.path ?: NSHomeDirectory()) + "/picpay.db"
 
     return Room.databaseBuilder<AppDatabase>(
-        name = dbPath
+        name = dbFilePath, factory = { AppDatabaseConstructor.initialize() }
     )
 }

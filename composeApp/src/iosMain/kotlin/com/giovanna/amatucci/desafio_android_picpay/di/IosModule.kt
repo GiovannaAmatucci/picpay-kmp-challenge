@@ -6,7 +6,9 @@ import com.giovanna.amatucci.desafio_android_picpay.data.local.db.AppDatabase
 import com.giovanna.amatucci.desafio_android_picpay.data.local.db.getDatabaseBuilder
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.network.HttpClientConfig
 import com.giovanna.amatucci.desafio_android_picpay.util.ConnectivityObserver
+import com.giovanna.amatucci.desafio_android_picpay.util.CryptoManager
 import com.giovanna.amatucci.desafio_android_picpay.util.IosConnectivityObserver
+import com.giovanna.amatucci.desafio_android_picpay.util.IosCryptoManager
 import com.giovanna.amatucci.desafio_android_picpay.util.IosLogWriter
 import com.giovanna.amatucci.desafio_android_picpay.util.LogWriter
 import kotlinx.cinterop.ExperimentalForeignApi
@@ -22,6 +24,7 @@ val iosModule = module {
             connectTimeout = AppConfig.CONNECT_TIMEOUT
         )
     }
+    single<CryptoManager> { IosCryptoManager() }
     single<AppDatabase> {
         getDatabaseBuilder().setDriver(BundledSQLiteDriver()).build()
     }
