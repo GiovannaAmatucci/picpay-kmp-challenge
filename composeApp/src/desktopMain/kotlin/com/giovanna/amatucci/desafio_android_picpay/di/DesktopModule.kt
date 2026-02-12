@@ -9,6 +9,7 @@ import com.giovanna.amatucci.desafio_android_picpay.util.ConnectivityObserver
 import com.giovanna.amatucci.desafio_android_picpay.util.CryptoManager
 import com.giovanna.amatucci.desafio_android_picpay.util.DesktopConnectivityObserver
 import com.giovanna.amatucci.desafio_android_picpay.util.DesktopCryptoManager
+import com.giovanna.amatucci.desafio_android_picpay.util.DesktopLogWriter
 import com.giovanna.amatucci.desafio_android_picpay.util.LogWriter
 import org.koin.dsl.module
 
@@ -22,24 +23,14 @@ val desktopModule = module {
         )
     }
     single<AppDatabase> {
-        getDatabaseBuilder().setDriver(BundledSQLiteDriver()).build()
+        getDatabaseBuilder().setDriver(BundledSQLiteDriver())
+            .fallbackToDestructiveMigration(true)
+            .build()
     }
 
     single<CryptoManager> { DesktopCryptoManager() }
 
-    single<LogWriter> {
-        object : LogWriter {
-            override fun d(tag: String, message: String) = println("DEBUG [$tag]: $message")
-            override fun w(tag: String, message: String, t: Throwable?) {
-                println("WARN [$tag]: $message")
-                t?.printStackTrace()
-            }
-            override fun e(tag: String, message: String, t: Throwable?) {
-                System.err.println("ERROR [$tag]: $message")
-                t?.printStackTrace()
-            }
-        }
-    }
+    single<LogWriter> { DesktopLogWriter() }
     single<ConnectivityObserver> {
         DesktopConnectivityObserver()
     }

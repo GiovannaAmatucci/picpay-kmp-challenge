@@ -51,7 +51,7 @@ val androidModule = module {
         Room.databaseBuilder(
             context, AppDatabase::class.java, AppConfig.DATABASE_NAME
         ).openHelperFactory(factory)
-            .fallbackToDestructiveMigration(false)
+            .fallbackToDestructiveMigration(true)
             .build()
     }
 

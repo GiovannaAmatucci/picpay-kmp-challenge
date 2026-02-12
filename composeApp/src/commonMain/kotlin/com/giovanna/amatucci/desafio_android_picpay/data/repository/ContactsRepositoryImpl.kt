@@ -6,6 +6,7 @@ import com.giovanna.amatucci.desafio_android_picpay.data.remote.mapper.toDomainL
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.mapper.toEntityList
 import com.giovanna.amatucci.desafio_android_picpay.domain.model.UserInfo
 import com.giovanna.amatucci.desafio_android_picpay.domain.repository.ContactsRepository
+import com.giovanna.amatucci.desafio_android_picpay.util.CryptoManager
 import com.giovanna.amatucci.desafio_android_picpay.util.ErrorFormat
 import com.giovanna.amatucci.desafio_android_picpay.util.LogMessages
 import com.giovanna.amatucci.desafio_android_picpay.util.LogWriter
@@ -25,16 +26,16 @@ class ContactsRepositoryImpl(
     private val api: PicPayApi,
     private val userDao: ContactUserDao,
     private val ioDispatcher: CoroutineDispatcher,
-    private val logWriter: LogWriter
+    private val logWriter: LogWriter,
+    private val cryptoManager: CryptoManager
 ) : ContactsRepository {
     private val tag = TAG.REPO_TAG
     override fun getUsers(forceRefresh: Boolean): Flow<ResultWrapper<List<UserInfo>>> = flow {
         val localData = userDao.getAllUsers().first()
         val hasCachedData = localData.isNotEmpty()
         logWriter.d(tag, LogMessages.REPO_CHECK_CACHE.format(localData.size))
-
         if (hasCachedData) {
-            emit(ResultWrapper.Success(localData.toDomainList()))
+            emit(ResultWrapper.Success(localData.toDomainList(cryptoManager)))
         }
 
         val shouldFetch = forceRefresh || !hasCachedData
@@ -52,10 +53,9 @@ class ContactsRepositoryImpl(
                                 logWriter.d(
                                     tag, LogMessages.REPO_NETWORK_SUCCESS.format(items.size)
                                 )
-                                userDao.updateContacts(items.toEntityList())
+                                userDao.updateContacts(items.toEntityList(cryptoManager))
                             }
                         }
-
                         is ResultWrapper.GenericError, is ResultWrapper.NetworkError -> {
                             handleApiError(apiResult, hasCachedData)
                             emit(apiResult)
@@ -69,12 +69,11 @@ class ContactsRepositoryImpl(
                 if (!hasCachedData) return@flow
             }
         }
-        emitAll(userDao.getAllUsers().map {
-            ResultWrapper.Success(it.toDomainList())
+        emitAll(userDao.getAllUsers().map { entities ->
+            ResultWrapper.Success(entities.toDomainList(cryptoManager))
         }.distinctUntilChanged())
 
     }.flowOn(ioDispatcher)
-
     private fun handleApiError(result: ResultWrapper<List<UserInfo>>, hasCache: Boolean) {
         val errorDetails = when (result) {
             is ResultWrapper.GenericError -> ErrorFormat.ERR_FORMAT_GENERIC.format(

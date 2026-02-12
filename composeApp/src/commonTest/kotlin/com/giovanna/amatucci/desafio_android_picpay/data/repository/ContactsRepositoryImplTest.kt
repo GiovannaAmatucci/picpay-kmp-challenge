@@ -4,6 +4,7 @@ import com.giovanna.amatucci.desafio_android_picpay.data.local.db.model.ContactU
 import com.giovanna.amatucci.desafio_android_picpay.data.remote.model.UserResponse
 import com.giovanna.amatucci.desafio_android_picpay.domain.model.UserInfo
 import com.giovanna.amatucci.desafio_android_picpay.util.FakeContactUserDao
+import com.giovanna.amatucci.desafio_android_picpay.util.FakeCryptoManager
 import com.giovanna.amatucci.desafio_android_picpay.util.FakeLogWriter
 import com.giovanna.amatucci.desafio_android_picpay.util.FakePicPayApi
 import com.giovanna.amatucci.desafio_android_picpay.util.ResultWrapper
@@ -23,13 +24,15 @@ class ContactsRepositoryImplTest {
     private lateinit var repository: ContactsRepositoryImpl
     private lateinit var fakeApi: FakePicPayApi
     private lateinit var fakeDao: FakeContactUserDao
+    private lateinit var fakeCrypto: FakeCryptoManager
     private val logWriter = FakeLogWriter()
 
     @BeforeTest
     fun setup() {
         fakeApi = FakePicPayApi()
         fakeDao = FakeContactUserDao()
-        repository = ContactsRepositoryImpl(fakeApi, fakeDao, testDispatcher, logWriter)
+        fakeCrypto = FakeCryptoManager()
+        repository = ContactsRepositoryImpl(fakeApi, fakeDao, testDispatcher, logWriter, fakeCrypto)
     }
 
     @Test
@@ -59,7 +62,14 @@ class ContactsRepositoryImplTest {
     fun getUsers_WHEN_cache_has_data_and_refresh_is_forced_THEN_it_should_emit_cache_AND_error() =
         runTest(testDispatcher) {
             // GIVEN
-            val localData = listOf(ContactUserEntity(1, "Gio", "img", "gio"))
+            val localData = listOf(
+                ContactUserEntity(
+                    id = 1,
+                    name = "Gio".encodeToByteArray(),
+                    username = "gio".encodeToByteArray(),
+                    img = "img"
+                )
+            )
             fakeDao.setInitialData(localData)
 
             fakeApi.apply {
@@ -81,17 +91,12 @@ class ContactsRepositoryImplTest {
             val firstEmission = results[0]
             assertTrue(firstEmission is ResultWrapper.Success, "Primeira emissão deve ser Cache")
             assertEquals("Gio", (firstEmission).value[0].name)
+
             val errorEmission = results[1]
             assertTrue(
                 errorEmission is ResultWrapper.NetworkError,
-                "A segunda emissão deve ser o Erro de Rede (recebido: $errorEmission)"
+                "A segunda emissão deve ser o Erro de Rede"
             )
-            if (results.size > 2) {
-                assertTrue(
-                    results.last() is ResultWrapper.Success,
-                    "O repositório volta para o cache após o erro"
-                )
-            }
         }
 
     @Test

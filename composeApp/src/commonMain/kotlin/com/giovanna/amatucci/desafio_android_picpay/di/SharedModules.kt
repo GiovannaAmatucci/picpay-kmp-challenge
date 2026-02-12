@@ -24,7 +24,7 @@ val networkModule = module {
     single<PicPayApi> { PicPayApiImpl(get(), get()) }
 }
 val domainModule = module {
-    single<ContactsRepository> { ContactsRepositoryImpl(get(), get(), get(), get()) }
+    single<ContactsRepository> { ContactsRepositoryImpl(get(), get(), get(), get(), get()) }
     factory<FetchContactsUseCase> { FetchContactsUseCaseImpl(get()) }
     single { get<AppDatabase>().contactUserDao() }
 }

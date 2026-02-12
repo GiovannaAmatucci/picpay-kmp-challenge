@@ -13,5 +13,4 @@ import com.giovanna.amatucci.desafio_android_picpay.data.local.db.model.ContactU
 abstract class AppDatabase : RoomDatabase() {
     abstract fun contactUserDao(): ContactUserDao
 }
-
 expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase>
